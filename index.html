@@ -1,45 +1,66 @@
 <!doctype html>
-<html>
+<html lang='en-GB'>
 <head>
   <meta charset='utf-8'>
  	<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+  <link href="css/styles.css" rel="stylesheet" type="text/css">
   <title>Ractive to do list</title>
 </head>
+
 <body>
-  <div id='project'></div>
+  <div id='container'></div>
   <script id='template' type='text/ractive'>
-    <div class='container'>
+    <div class="container">
+
       <h1>To-do List</h1>
       <input on-change="newTodo" placeholder="New to-do item" id="newitem"></input>
-      <ul>
-      {{#each items:i}}
-        <li>{{description}}</li>
-      {{/each}}
+      <br>
+      <ul id="list">
+
+      {{#items:i}}
+        <p><input type='checkbox' checked='{{done}}'> {{description}} <span id='remove' on-click='delete:{{i}}' class='btn btn-xs btn-danger'> x </span></p>
+      {{/items}}
       </ul>
     </div>
- 
-  </script>
 
+  </script>
   <script src='http://cdn.ractivejs.org/latest/ractive.js'></script>
   <script src='js/ractive.js'></script>
   <script>
+
+    var toDos = [{done: false, description: "homework"},
+        {done: false, description: "grocery shopping"},
+        {done: false, description: "make dinner"},
+        {done: true, description: "Watch Gossip Girl"}];
+
     var ractive = new Ractive({
-      el:'project',
+      el:'container',
       template:'#template',
       data:{
-        items:[
-        {done: false, description: "homework"},
-        {done: false, description: "grocery shopping"},
-        {done: false, description: "make dinner"}
-        ]
+        items: toDos,
       }
     });
 
-    ractive.on("newTodo", function(event){
-      ractive.push('items',(document.getElementById("newitem").value));
-    })
-  
+
+    ractive.on({
+        newTodo: function(event){
+        var newTodo = {
+        done:false,
+        description: document.getElementById("newitem").value
+      };
+        document.getElementById("newitem").value = "";
+
+        ractive.push('items',newTodo);
+      },
+        delete: function(index){
+          // console.log(index)
+          this.splice('items', index.index.i, 1);
+        }
+    });
+
 
 
   </script>
+
 </body>
+
